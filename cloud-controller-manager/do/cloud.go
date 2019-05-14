@@ -37,6 +37,8 @@ const (
 	providerName        string = "digitalocean"
 )
 
+var version string
+
 type tokenSource struct {
 	AccessToken string
 }
@@ -64,6 +66,12 @@ func newCloud() (cloudprovider.Interface, error) {
 
 	if overrideURL := os.Getenv(doOverrideAPIURLEnv); overrideURL != "" {
 		opts = append(opts, godo.SetBaseURL(overrideURL))
+	}
+
+	if version != "" {
+		opts = append(opts, godo.SetUserAgent("digitalocean-cloud-controller-manager"+"/"+version))
+	} else {
+		opts = append(opts, godo.SetUserAgent("digitalocean-cloud-controller-manager"+"/dev"))
 	}
 
 	if token == "" {
